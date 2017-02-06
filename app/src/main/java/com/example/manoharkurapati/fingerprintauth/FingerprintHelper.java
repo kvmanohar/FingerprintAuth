@@ -6,22 +6,25 @@ import android.widget.TextView;
 
 
 /**
- * Created by manoharkurapati on 27/12/2016.
+ * Created by manohar kurapati on 27/12/2016.
  */
 
 public class FingerprintHelper extends FingerprintManager.AuthenticationCallback {
 
-    private TextView tv;
+    private TextView errTv;
+    private TextView otpTv;
 
-    public FingerprintHelper(TextView tv){
-        this.tv = tv;
+    public FingerprintHelper(TextView errorTv, TextView otpTv){
+        this.errTv = errorTv;
+        this.otpTv = otpTv;
     }
 
 
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
         super.onAuthenticationError(errorCode, errString);
-        tv.setText("Authentication Error.");
+        errTv.setText("Authentication Error.");
+        otpTv.setText("");
     }
 
     @Override
@@ -32,13 +35,15 @@ public class FingerprintHelper extends FingerprintManager.AuthenticationCallback
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
         super.onAuthenticationSucceeded(result);
-        tv.setText("Authentication Successful");
+        errTv.setText("Authentication Successful");
+        otpTv.setText("1429");
     }
 
     @Override
     public void onAuthenticationFailed() {
         super.onAuthenticationFailed();
-        tv.setText("Authentication Failed");
+        errTv.setText("Authentication Failed");
+        otpTv.setText("");
     }
 
 
@@ -50,6 +55,7 @@ public class FingerprintHelper extends FingerprintManager.AuthenticationCallback
             manager.authenticate(cryptoObject,signal,0,this,null);
         }
         catch (SecurityException se) {
+
 
         }
     }

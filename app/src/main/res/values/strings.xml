@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">FingerprintAuth</string>
+    <string name="app_name">Work Flow Automation - OTP</string>
+    <string name="detailed_text">Use this app to Generate a OTP (One Time Password) for Work Flow Automation Login</string>
 </resources>

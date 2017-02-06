@@ -6,6 +6,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -39,13 +40,11 @@ public class MainActivity extends AppCompatActivity {
 //    8. Implement a callback class to handle authentication events
 
     private static final String KEY_NAME="MS_Key";
-    private TextView message;
+    private TextView messageTv, otpTv;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
     private FingerprintManager fingerprintManager;
     private FingerprintManager.CryptoObject cryptoObject;
-
-
 
     /**
         2. Verify that the lock screen is secure
@@ -63,19 +62,19 @@ public class MainActivity extends AppCompatActivity {
 
             //Check the phone is secure with lock screen
             if (!keyguardManager.isKeyguardSecure()){
-                message.setText("Secure lock screen not enabled.");
+                messageTv.setText("Secure lock screen not enabled.");
                 return false;
             }
 
             //check if Fingerprint sensor is present
             if (!fingerprintManager.isHardwareDetected()){
-                message.setText("Fingerprint Authentication not supported.");
+                messageTv.setText("Fingerprint Authentication not supported.");
                 return false;
             }
 
             //Check if any fingerprint is enrolled in the phone
             if (!fingerprintManager.hasEnrolledFingerprints()){
-                message.setText("No fingerprint configured");
+                messageTv.setText("No fingerprint configured");
                 return false;
             }
         }
@@ -124,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     /**
      * 6. Generate the Cipher
      *
@@ -138,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
              SecretKey key = (SecretKey) keyStore.getKey(KEY_NAME,null);
              cipher.init(Cipher.ENCRYPT_MODE,key);
+             Log.d("FingerprintAuth", "generateCipher: " + cipher);
 
              return cipher;
 
@@ -164,10 +163,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        message = (TextView) findViewById(R.id.fingerStatus);
+        messageTv = (TextView) findViewById(R.id.fingerStatus);
+        otpTv = (TextView) findViewById(R.id.otpTextView);
         Button btn =  (Button) findViewById(R.id.authBtn);
 
-        final FingerprintHelper fph = new FingerprintHelper(message);
+        final FingerprintHelper fph = new FingerprintHelper(messageTv, otpTv);
 
         if (!checkFinger()){
             btn.setEnabled(false);
@@ -184,11 +184,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                message.setText("Swipe your finger.");
+                messageTv.setText("Swipe your finger.");
                 fph.doAuthentication(fingerprintManager,cryptoObject);
             }
         });
